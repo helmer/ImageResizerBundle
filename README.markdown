@@ -38,8 +38,11 @@ Provides "on the fly" image resizement using Imagick, CURL & Memcached (by defau
         sizes:
             small: [32, 32] # width, height (default)
 
-        # where to find the images (default to /tmp)
+        # where to find the images (defaults to /tmp)
         base_directory: /path/to/images
+
+        # image to show when resource loading has failed (defaults to blank -> exception is thrown)
+        default_image: /path/to/default/image.ext
 
 ### For Mongodb based cache only :
 

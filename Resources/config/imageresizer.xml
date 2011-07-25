@@ -7,6 +7,7 @@
         <parameter key="templating.helper.imageresizer.class">Adenclassifieds\ImageResizerBundle\Templating\Helper\ImageResizerHelper</parameter>
         <parameter key="imageresizer.loader.class">Adenclassifieds\ImageResizerBundle\Image\Loader</parameter>
         <parameter key="imageresizer.loader.base_directory">/tmp</parameter>
+        <parameter key="imageresizer.loader.default_image" />
         <parameter key="imageresizer.processor.class">Adenclassifieds\ImageResizerBundle\Image\Processor</parameter>
         <parameter key="imageresizer.class">Adenclassifieds\ImageResizerBundle\Image\Resizer</parameter>
         <parameter key="imageresizer.functions" type="collection">
@@ -35,6 +36,7 @@
             </argument>
             <argument type="service" id="imageresizer.loader.cache" />
             <argument>%imageresizer.loader.base_directory%</argument>
+            <argument>%imageresizer.loader.default_image%</argument>
         </service>
         <service id="imageresizer.processor" class="%imageresizer.processor.class%">
         </service>

@@ -1,4 +1,5 @@
 <?php
+
 namespace Adenclassifieds\ImageResizerBundle\Image;
 
 use Doctrine\Common\Cache\AbstractCache;
@@ -38,19 +39,24 @@ class Loader
      */
     protected $basePath;
 
+    /**
+     * Path to default image in case load fails
+     *
+     * @var string
+     */
+    protected $defaultImage;
 
     /**
      * @param Imagick image
      * @param Cache cache
      * @param string base path
      */
-    public function __construct(\Imagick $image, AbstractCache $cache, $basePath)
+    public function __construct(\Imagick $image, AbstractCache $cache, $basePath, $defaultImage)
     {
-      $this->image = $image;
-
-      $this->cache = $cache;
-
-      $this->basePath = $basePath;
+        $this->image = $image;
+        $this->cache = $cache;
+        $this->basePath = $basePath;
+        $this->defaultImage = $defaultImage;
     }
 
 
@@ -62,12 +68,19 @@ class Loader
      */
     public function load($resource)
     {
-        if (strpos($resource, 'http') === 0) {
-            $content = $this->loadExternalImage($resource);
-            $this->image->readImageBlob($content);
-        } else {
-            $fullPath = $this->basePath .'/'. $resource;
-            $this->image->readImage($fullPath);
+        try {
+            if (0 === strpos($resource, 'http')) {
+                $content = $this->loadExternalImage($resource);
+                $this->image->readImageBlob($content);
+            } else {
+                $fullPath = $this->basePath . '/' . $resource;
+                $this->image->readImage($fullPath);
+            }
+        } catch (\Exception $e) {
+            if (0 === strlen($this->defaultImage)) {
+                throw $e;
+            }
+            $this->image->readImage($this->defaultImage);
         }
 
         return $this->image;
@@ -80,8 +93,8 @@ class Loader
      */
     protected function loadExternalImage($resource)
     {
-        if ($content= $this->cache->fetch($resource)) {
-          return $content;
+        if ($content = $this->cache->fetch($resource)) {
+            return $content;
         }
 
         $curl = curl_init();
@@ -92,7 +105,7 @@ class Loader
         $content = curl_exec($curl);
         curl_close($curl);
 
-        if ( ! $content) {
+        if (!$content) {
             throw new NotFoundHttpException();
         }
 

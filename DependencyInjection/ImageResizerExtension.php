@@ -41,8 +41,11 @@ class ImageResizerExtension extends Extension
             $container->setParameter('imageresizer.loader.base_directory', $config['base_directory']);
         }
 
-        $this->loadCache($container, $config['cache']);
+        if (isset($config['default_image'])) {
+            $container->setParameter('imageresizer.loader.default_image', $config['default_image']);
+        }
 
+        $this->loadCache($container, $config['cache']);
     }
 
     /**
@@ -99,7 +102,6 @@ class ImageResizerExtension extends Extension
 
         $loader->load('imageresizer.xml');
     }
-
 
     /**
      * Returns the base path for the XSD files.
